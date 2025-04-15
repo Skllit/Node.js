@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Online Banking</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  <main class="container">
+    <h2>Login</h2>
+    <% if (typeof error !== 'undefined') { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <form action="/login" method="POST">
+      <label for="accountNumber">Account Number:</label>
+      <input type="text" name="accountNumber" id="accountNumber" required>
+      <label for="loginPassword">Password:</label>
+      <input type="password" name="loginPassword" id="loginPassword" required>
+      <button type="submit" class="btn">Login</button>
+    </form>
+    <div class="links">
+      <a href="/forgotUserID">Forgot User ID?</a> |
+      <a href="/forgotPassword">Forgot Password?</a>
+    </div>
+  </main>
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

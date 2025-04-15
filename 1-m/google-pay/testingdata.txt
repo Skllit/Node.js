@@ -1,0 +1,105 @@
+✅ 1. Create Users
+POST http://localhost:3000/users
+Creates new users (with auto-generated UUID for QR).
+
+🔸Request Body
+json
+Copy
+Edit
+{
+  "name": "Alice",
+  "email": "alice@example.com",
+  "phone": "1111111111"
+}
+Repeat for a second user:
+
+json
+Copy
+Edit
+{
+  "name": "Bob",
+  "email": "bob@example.com",
+  "phone": "2222222222"
+}
+✅ 2. Get All Users
+GET http://localhost:3000/users
+
+You'll get MongoDB IDs (_id) and uuid for each user — you'll use this in the next steps.
+
+✅ 3. Generate QR Code for a User
+GET http://localhost:3000/users/:id/qrcode
+Replace :id with the user’s _id from previous step (e.g. Alice's ID).
+
+Returns: Base64 QR code image (qrCodeDataUri)
+
+✅ 4. Send Money via QR Code
+POST http://localhost:3000/transactions/qr
+
+🔸Request Body
+json
+Copy
+Edit
+{
+  "senderId": "<Alice_ID>",
+  "recipientUuid": "<Bob_UUID>",
+  "amount": 100
+}
+This creates 2 transactions (SENT & RECEIVED) and also sends email to both sender and receiver.
+
+✅ 5. Send Money via Phone Number
+POST http://localhost:3000/transactions/phone
+
+🔸Request Body
+json
+Copy
+Edit
+{
+  "senderId": "<Bob_ID>",
+  "recipientPhone": "1111111111", 
+  "amount": 50
+}
+Sends 50 from Bob to Alice using phone number.
+
+✅ 6. Get All Transactions for a User
+GET http://localhost:3000/transactions?userId=<Alice_ID>
+
+🔸Optional filters
+type=sent or received
+
+startDate=2024-01-01&endDate=2025-12-31
+
+Example with filters:
+
+http
+Copy
+Edit
+GET http://localhost:3000/transactions?userId=<Alice_ID>&type=sent&startDate=2024-01-01&endDate=2025-12-31
+✅ 7. Get Current Balance, Sent, Received Summary
+GET http://localhost:3000/users/<userId>/balance
+
+Example:
+
+http
+Copy
+Edit
+GET http://localhost:3000/users/<Alice_ID>/balance
+🔸Response
+json
+Copy
+Edit
+{
+  "userId": "<Alice_ID>",
+  "totalSent": 150,
+  "totalReceived": 50,
+  "balance": -100
+}
+✅ 8. Check Emails for Transaction Alerts (Ethereal)
+You should receive emails on both sides (sender & recipient) for every transaction.
+Since you're using Ethereal, the console will log something like:
+
+nginx
+Copy
+Edit
+Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+Open that link to view the email in a browser.
+

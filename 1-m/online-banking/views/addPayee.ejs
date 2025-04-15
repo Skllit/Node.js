@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Payee</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  <main class="container">
+    <h2>Add a New Payee</h2>
+    <% if (typeof error !== 'undefined') { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <% if (typeof success !== 'undefined') { %>
+      <p class="success"><%= success %></p>
+      <% if (typeof nextStep !== 'undefined') { %>
+        <a href="<%= nextStep %>" class="btn">Back to Transfer</a>
+      <% } %>
+    <% } else { %>
+      <form action="/transfer/addPayee" method="POST">
+        <label for="beneficiaryName">Beneficiary Name:</label>
+        <input type="text" name="beneficiaryName" id="beneficiaryName" required>
+        <label for="beneficiaryAccount">Beneficiary Account Number:</label>
+        <input type="text" name="beneficiaryAccount" id="beneficiaryAccount" required>
+        <label for="nickname">Nickname (optional):</label>
+        <input type="text" name="nickname" id="nickname">
+        <button type="submit" class="btn">Save Payee</button>
+      </form>
+    <% } %>
+  </main>
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

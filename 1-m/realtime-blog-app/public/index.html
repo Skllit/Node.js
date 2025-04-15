@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Real-Time Blog App</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .blog-post { border: 1px solid #ccc; padding: 10px; margin-bottom: 20px; }
+    .comments { margin-top: 10px; padding-left: 20px; }
+    .comment { margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Real-Time Blog Posts</h1>
+  <div id="blogPosts"></div>
+
+  <hr>
+  <h2>Add New Blog Post</h2>
+  <form id="blogPostForm">
+    <input type="text" id="title" placeholder="Blog Post Title" required>
+    <br><br>
+    <textarea id="content" placeholder="Blog Post Content" rows="4" cols="50" required></textarea>
+    <br><br>
+    <button type="submit">Add Blog Post</button>
+  </form>
+
+  <hr>
+  <!-- Socket.io client library -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // Function to load blog posts from the server
+    async function loadBlogPosts() {
+      const res = await fetch('/blogposts');
+      const posts = await res.json();
+      const blogPostsDiv = document.getElementById('blogPosts');
+      blogPostsDiv.innerHTML = '';
+
+      posts.forEach(post => {
+        const postDiv = document.createElement('div');
+        postDiv.classList.add('blog-post');
+        postDiv.dataset.postId = post._id;
+        postDiv.innerHTML = `
+          <h3>${post.title}</h3>
+          <p>${post.content}</p>
+          <div class="comments" id="comments-${post._id}">
+            <h4>Comments:</h4>
+            <div class="comments-list"></div>
+            <form class="comment-form">
+              <input type="text" name="username" placeholder="Your Name" required>
+              <input type="text" name="text" placeholder="Add a comment" required>
+              <button type="submit">Post Comment</button>
+            </form>
+          </div>
+        `;
+        blogPostsDiv.appendChild(postDiv);
+
+        // Load comments for this post
+        loadComments(post._id);
+
+        // Setup comment form event listener
+        const commentForm = postDiv.querySelector('.comment-form');
+        commentForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const formData = new FormData(commentForm);
+          const username = formData.get('username');
+          const text = formData.get('text');
+          const blogPostId = post._id;
+
+          // Emit the new comment via Socket.io
+          socket.emit('newComment', { blogPostId, username, text });
+          commentForm.reset();
+        });
+      });
+    }
+
+    // Function to load comments for a specific blog post
+    async function loadComments(blogPostId) {
+      const res = await fetch(`/blogposts/${blogPostId}/comments`);
+      const comments = await res.json();
+      const commentsListDiv = document.querySelector(`#comments-${blogPostId} .comments-list`);
+      if (commentsListDiv) {
+        commentsListDiv.innerHTML = '';
+        comments.forEach(comment => {
+          const commentDiv = document.createElement('div');
+          commentDiv.classList.add('comment');
+          commentDiv.innerHTML = `<strong>${comment.username}:</strong> ${comment.text} <em>(${new Date(comment.createdAt).toLocaleTimeString()})</em>`;
+          commentsListDiv.appendChild(commentDiv);
+        });
+      }
+    }
+
+    // Listen for realtime updates when a new comment is posted
+    socket.on('commentPosted', (comment) => {
+      const commentsListDiv = document.querySelector(`#comments-${comment.blogPost} .comments-list`);
+      if (commentsListDiv) {
+        const commentDiv = document.createElement('div');
+        commentDiv.classList.add('comment');
+        commentDiv.innerHTML = `<strong>${comment.username}:</strong> ${comment.text} <em>(${new Date(comment.createdAt).toLocaleTimeString()})</em>`;
+        commentsListDiv.appendChild(commentDiv);
+      }
+    });
+
+    // Handle blog post form submission
+    document.getElementById('blogPostForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+
+      const res = await fetch('/blogposts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      });
+      if (res.ok) {
+        document.getElementById('blogPostForm').reset();
+        loadBlogPosts();
+      }
+    });
+
+    // Initial load of blog posts
+    loadBlogPosts();
+  </script>
+</body>
+</html>

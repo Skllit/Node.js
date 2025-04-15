@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Social Hub Real-Time</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .post { border: 1px solid #ccc; padding: 10px; margin-bottom: 20px; }
+    .comment { margin-left: 20px; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <h1>Social Hub Real-Time Feed</h1>
+  
+  <section>
+    <h2>Create New Post</h2>
+    <form id="postForm">
+      <input type="text" id="postContent" placeholder="What's on your mind?" required>
+      <br>
+      <input type="text" id="postAuthor" placeholder="Your User ID" required>
+      <br>
+      <input type="text" id="postGroup" placeholder="Group ID (optional)">
+      <br>
+      <button type="submit">Post</button>
+    </form>
+  </section>
+  
+  <hr>
+  
+  <section>
+    <h2>Feed</h2>
+    <div id="postsContainer"></div>
+  </section>
+  
+  <!-- Socket.io client library -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // Listen for new posts via real-time event
+    socket.on('postCreated', (post) => {
+      addPostToDOM(post);
+    });
+
+    // Listen for new comments via real-time event
+    socket.on('commentAdded', (comment) => {
+      const postElem = document.getElementById(`post-${comment.post}`);
+      if (postElem) {
+        const commentsDiv = postElem.querySelector('.comments');
+        const commentElem = document.createElement('div');
+        commentElem.classList.add('comment');
+        commentElem.innerText = `Comment by ${comment.author}: ${comment.text} (${new Date(comment.createdAt).toLocaleTimeString()})`;
+        commentsDiv.appendChild(commentElem);
+      }
+    });
+
+    // Post form submission
+    document.getElementById('postForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const content = document.getElementById('postContent').value;
+      const author = document.getElementById('postAuthor').value;
+      const group = document.getElementById('postGroup').value || null;
+      socket.emit('newPost', { content, author, group });
+      e.target.reset();
+    });
+
+    // Utility: add a new post element to the DOM
+    function addPostToDOM(post) {
+      const container = document.getElementById('postsContainer');
+      const postDiv = document.createElement('div');
+      postDiv.classList.add('post');
+      postDiv.id = `post-${post._id}`;
+      postDiv.innerHTML = `
+        <p><strong>Post:</strong> ${post.content}</p>
+        <p><em>By: ${post.author} | ${new Date(post.createdAt).toLocaleString()}</em></p>
+        <div class="comments">
+          <h4>Comments:</h4>
+        </div>
+        <form class="commentForm">
+          <input type="text" name="commentText" placeholder="Add comment" required>
+          <input type="text" name="commentAuthor" placeholder="Your User ID" required>
+          <button type="submit">Submit Comment</button>
+        </form>
+      `;
+      container.prepend(postDiv);
+
+      // Comment form listener
+      postDiv.querySelector('.commentForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const commentText = this.commentText.value;
+        const commentAuthor = this.commentAuthor.value;
+        socket.emit('newComment', { text: commentText, postId: post._id, author: commentAuthor });
+        this.reset();
+      });
+    }
+  </script>
+</body>
+</html>

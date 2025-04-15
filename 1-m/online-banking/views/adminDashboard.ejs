@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  <main class="container">
+    <h2>Admin Dashboard</h2>
+    <h3>Pending Account Requests</h3>
+    <% if (pendingUsers && pendingUsers.length > 0) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Account Number</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% pendingUsers.forEach(function(user) { %>
+            <tr>
+              <td><%= user.accountNumber %></td>
+              <td><%= user.fullName %></td>
+              <td><%= user.email %></td>
+              <td>
+                <form action="/admin/approve" method="POST" style="display:inline;">
+                  <input type="hidden" name="accountNumber" value="<%= user.accountNumber %>">
+                  <button type="submit" class="btn small-btn">Approve</button>
+                </form>
+                <form action="/admin/disapprove" method="POST" style="display:inline;">
+                  <input type="hidden" name="accountNumber" value="<%= user.accountNumber %>">
+                  <button type="submit" class="btn small-btn red">Disapprove</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p>No pending account requests.</p>
+    <% } %>
+  </main>
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

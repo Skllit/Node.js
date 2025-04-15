@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register / Open Account | Online Banking</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <h2>Open a New Account</h2>
+  <form action="/openAccount" method="POST">
+    <label for="fullName">Full Name:</label>
+    <input type="text" name="fullName" id="fullName" required>
+    <br>
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" required>
+    <br>
+    <label for="mobile">Mobile:</label>
+    <input type="text" name="mobile" id="mobile" required>
+    <br>
+    <!-- Additional optional fields -->
+    <button type="submit">Submit Request</button>
+  </form>
+  <script src="/js/main.js"></script>
+</body>
+</html>

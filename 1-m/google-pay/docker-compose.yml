@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - '27017:27017'
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+
+  app:
+    build: .
+    container_name: google-pay-app
+    depends_on:
+      - mongo
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    environment:
+      # Set the MongoDB URI to use the service name "mongo"
+      - MONGO_URI=mongodb://mongo:27017/googlepay
+
+volumes:
+  mongo-data:

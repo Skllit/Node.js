@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Forgot User ID</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  <main class="container">
+    <h2>Forgot User ID</h2>
+    <% if (typeof error !== 'undefined') { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <% if (typeof success !== 'undefined') { %>
+      <p class="success"><%= success %></p>
+      <% if (previewURL) { %>
+        <p class="info">Preview Email: <a href="<%= previewURL %>" target="_blank">View Email</a></p>
+      <% } %>
+    <% } else { %>
+      <form action="/forgotUserID" method="POST">
+        <label for="accountNumber">Account Number:</label>
+        <input type="text" name="accountNumber" id="accountNumber" required>
+        <label for="otp">OTP (use 123456):</label>
+        <input type="text" name="otp" id="otp" required>
+        <button type="submit" class="btn">Submit</button>
+      </form>
+    <% } %>
+  </main>
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

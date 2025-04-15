@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Account Statement</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  <main class="container">
+    <h2>Account Statement</h2>
+    <form action="/dashboard/statement" method="POST">
+      <label for="startDate">Start Date:</label>
+      <input type="date" name="startDate" id="startDate" value="<%= startDate || '' %>" required>
+      <label for="endDate">End Date:</label>
+      <input type="date" name="endDate" id="endDate" value="<%= endDate || '' %>" required>
+      <button type="submit" class="btn">Get Statement</button>
+    </form>
+    <% if (transactions && transactions.length > 0) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Transaction ID</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Mode</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% transactions.forEach(function(tx){ %>
+            <tr>
+              <td><%= tx.transactionId %></td>
+              <td><%= tx.type %></td>
+              <td>$<%= tx.amount %></td>
+              <td><%= tx.mode %></td>
+              <td><%= tx.date.toISOString().substring(0,10) %></td>
+              <td><%= tx.status %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p>No transactions found for the selected period.</p>
+    <% } %>
+  </main>
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

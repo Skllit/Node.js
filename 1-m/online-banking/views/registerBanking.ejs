@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register for Internet Banking</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  <main class="container">
+    <h2>Register for Internet Banking</h2>
+    <% if (typeof error !== 'undefined') { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <% if (typeof success !== 'undefined') { %>
+      <p class="success"><%= success %></p>
+      <% if (typeof nextStep !== 'undefined') { %>
+        <a href="<%= nextStep %>" class="btn">Go to Login</a>
+      <% } %>
+    <% } else { %>
+      <form action="/register" method="POST">
+        <label for="accountNumber">Account Number:</label>
+        <input type="text" name="accountNumber" id="accountNumber" placeholder="Enter Account Number" required>
+        <label for="loginPassword">Login Password:</label>
+        <input type="password" name="loginPassword" id="loginPassword" placeholder="Enter Login Password" required>
+        <label for="confirmLoginPassword">Confirm Login Password:</label>
+        <input type="password" name="confirmLoginPassword" id="confirmLoginPassword" placeholder="Confirm Login Password" required>
+        <label for="transactionPassword">Transaction Password:</label>
+        <input type="password" name="transactionPassword" id="transactionPassword" placeholder="Enter Transaction Password" required>
+        <label for="confirmTransactionPassword">Confirm Transaction Password:</label>
+        <input type="password" name="confirmTransactionPassword" id="confirmTransactionPassword" placeholder="Confirm Transaction Password" required>
+        <button type="submit" class="btn">Register</button>
+      </form>
+    <% } %>
+  </main>
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

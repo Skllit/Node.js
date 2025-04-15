@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard | Online Banking</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  <main class="container">
+    <h2>Welcome, <%= user.fullName %></h2>
+    <div class="card">
+      <h3>Account Information</h3>
+      <p><strong>Account Number:</strong> <%= user.accountNumber %></p>
+      <p><strong>Balance:</strong> $<%= account.balance %></p>
+    </div>
+    <div class="actions">
+      <a href="/dashboard/summary" class="btn">View Summary</a>
+      <a href="/dashboard/statement" class="btn">View Statement</a>
+      <a href="/dashboard/changePassword" class="btn">Change Password</a>
+      <a href="/dashboard/logout" class="btn">Logout</a>
+    </div>
+  </main>
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fund Transfer</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  <main class="container">
+    <h2>Fund Transfer</h2>
+    <% if (typeof error !== 'undefined') { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <% if (typeof success !== 'undefined') { %>
+      <p class="success"><%= success %></p>
+      <% if (typeof nextStep !== 'undefined') { %>
+        <a href="<%= nextStep %>" class="btn">Back to Dashboard</a>
+      <% } %>
+    <% } else { %>
+      <form action="/transfer" method="POST">
+        <label for="fromAccount">Your Account Number:</label>
+        <input type="text" name="fromAccount" id="fromAccount" required>
+        <label for="toAccount">Beneficiary Account Number:</label>
+        <input type="text" name="toAccount" id="toAccount" required>
+        <label for="amount">Amount:</label>
+        <input type="number" step="0.01" name="amount" id="amount" required>
+        <label for="mode">Transfer Mode:</label>
+        <select name="mode" id="mode" required>
+          <option value="NEFT">NEFT</option>
+          <option value="RTGS">RTGS</option>
+          <option value="IMPS">IMPS</option>
+        </select>
+        <button type="submit" class="btn">Transfer Funds</button>
+      </form>
+    <% } %>
+  </main>
+  <%- include('partials/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>
